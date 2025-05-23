@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: yt
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  producer:
+    build: ./producer
+    depends_on:
+      - redis
+
+  consumer:
+    build: ./consumer
+    depends_on:
+      - redis
+      - postgres
+
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "8501:8501"
+    depends_on:
+      - postgres
