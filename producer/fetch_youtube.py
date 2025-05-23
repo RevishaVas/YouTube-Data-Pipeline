@@ -5,7 +5,7 @@ from googleapiclient.discovery import build
 r = redis.Redis(host='redis', port=6379, decode_responses=True)
 
 # YouTube API setup
-youtube = build("youtube", "v3", developerKey="AIzaSyBalgSIPFgR6oJTLTAqL8n9xVah0Mc_hdM")
+youtube = build("youtube", "v3", developerKey="YOUTUBE_API_KEY")
 
 def fetch_videos():
     response = youtube.search().list(
