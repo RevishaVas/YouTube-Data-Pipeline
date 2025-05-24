@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   redis:
     image: redis
@@ -15,21 +16,53 @@ services:
       - "5432:5432"
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  producer:
-    build: ./producer
-    depends_on:
-      - redis
-
-  consumer:
-    build: ./consumer
-    depends_on:
-      - redis
-      - postgres
-
-  dashboard:
-    build: ./dashboard
+  airflow:
+    image: apache/airflow:2.7.2-python3.11
+    container_name: airflow
+    restart: always
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:pass@postgres:5432/yt
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    volumes:
+      - airflow_home:/opt/airflow
+      - ./dags:/opt/airflow/dags
     ports:
-      - "8501:8501"
+      - "8080:8080"
+    command: webserver
+
+  airflow-init:
+    image: apache/airflow:2.7.2-python3.11
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:pass@postgres:5432/yt
+    entrypoint: >
+      /bin/bash -c "airflow db migrate &&
+      airflow users create --username airflow --password airflow --firstname Air --lastname Flow --role Admin --email airflow@example.com"
+    volumes:
+      - airflow_home:/opt/airflow
+
+  airflow-scheduler:
+    image: apache/airflow:2.7.2-python3.11
+    restart: always
     depends_on:
       - postgres
+      - airflow
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:pass@postgres:5432/yt
+    volumes:
+      - airflow_home:/opt/airflow
+      - ./dags:/opt/airflow/dags
+      - ./producer:/opt/airflow/producer
+    command: scheduler
+
+volumes:
+  airflow_home:

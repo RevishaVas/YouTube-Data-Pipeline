@@ -1,11 +1,19 @@
 import redis
 from googleapiclient.discovery import build
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Fetch API key from environment
+API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 # Redis setup
 r = redis.Redis(host='redis', port=6379, decode_responses=True)
 
 # YouTube API setup
-youtube = build("youtube", "v3", developerKey="YOUTUBE_API_KEY")
+youtube = build("youtube", "v3", developerKey=API_KEY)
 
 def fetch_videos():
     response = youtube.search().list(
@@ -23,6 +31,7 @@ def fetch_videos():
             "published_at": item['snippet']['publishedAt']
         }
         r.xadd("youtube_stream", data)
+        print(f"✅ Pushed video: {data['title']}")
 
 if __name__ == "__main__":
     fetch_videos()

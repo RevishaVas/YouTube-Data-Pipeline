@@ -1,0 +1,9 @@
+# Airflow logs and runtime files
+airflow/logs/
+airflow/logs/**/*
+__pycache__/
+*.pyc
+.env
+*.db
+*.sqlite
+.airflow/

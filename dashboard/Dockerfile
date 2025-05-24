@@ -11,4 +11,5 @@ COPY . .
 RUN pip install -r requirements.txt
 
 # Default command (override if needed)
-CMD ["python", "streamlit", "run", "app.py"]  # or redis_to_postgres.py or app.py
+CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+  # or redis_to_postgres.py or app.py
