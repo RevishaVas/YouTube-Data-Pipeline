@@ -39,16 +39,22 @@ docker-compose up --build
 ```
 **4. Access the Services**
 Service	          URL
-Airflow UI	      http://localhost:8080
-Streamlit Dash	  http://localhost:8501
-PostgreSQL	      localhost:5432/yt
-Redis	            localhost:6379
+
+Airflow UI -	      http://localhost:8080
+
+Streamlit Dash -	  http://localhost:8501
+
+PostgreSQL -	      localhost:5432/yt
+
+Redis	-            localhost:6379
 
 
 
 ## 📂 Project Structure
 ![image](https://github.com/user-attachments/assets/6794d444-f78b-40e8-ba65-6b06b07b5cdf)
+![Screenshot 2025-05-24 165128](https://github.com/user-attachments/assets/58ef6e82-baf4-4012-9a78-cef00cdeebe0)
 
+![Screenshot 2025-05-24 232018](https://github.com/user-attachments/assets/5e193ac6-b06c-479b-9b8c-83bf6d7f69df)
 
 
 ## ⏱️ Airflow DAG
